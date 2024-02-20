@@ -1,0 +1,22 @@
+@import 'base.css';
+
+.fullscreen-modal {
+  position: fixed; /* Cover the entire viewport */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Full viewport width */
+  height: 100vh; /* Full viewport height */
+  z-index: 1050; /* Ensure it's above other content */
+  background-color: #fff; /* Or any other color */
+  overflow: auto; /* Enable scroll if the content is larger than the screen */
+}
+
+.fullscreen-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+  z-index: 1040; /* Below the modal but above other content */
+}
