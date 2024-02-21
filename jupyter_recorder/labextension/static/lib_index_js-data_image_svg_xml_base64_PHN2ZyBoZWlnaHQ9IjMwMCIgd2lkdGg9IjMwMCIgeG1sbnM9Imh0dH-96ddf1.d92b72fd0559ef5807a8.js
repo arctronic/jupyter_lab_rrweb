@@ -60,6 +60,10 @@ const plugin = {
                 }
             });
         }
+        app.restored.then(() => {
+            startRecording();
+            console.log('Recording started triggered upon starting the jupyterlab app');
+        });
         function stopRecording() {
             console.log('Recording stopped');
             if (recorder) {
@@ -142,83 +146,6 @@ const plugin = {
             controlBar.appendChild(cancelButton);
             controlBar.appendChild(downloadButton);
         }
-        // function showReplayModal() {
-        //   if (events.length === 0) {
-        //     console.log('No recorded events');
-        //     return;
-        //   }
-        //   console.log('Replaying session');
-        //   // Create a div element to hold the replayer with specific styling
-        //   const div = document.createElement('div');
-        //   div.style.width = '100vw';
-        //   div.style.height = '100vh';
-        //   div.style.position = 'fixed';
-        //   div.style.top = '0';
-        //   div.style.left = '0';
-        //   div.style.margin = '0';
-        //   div.style.padding = '0'; // Ensure no padding
-        //   div.style.backgroundColor = '#fff';
-        //   div.style.zIndex = '1000'; // Ensure it's on top
-        //   div.style.display = 'flex'; // Use flex to center the child
-        //   div.style.justifyContent = 'center'; // Center horizontally
-        //   div.style.alignItems = 'center'; // Center vertically
-        //   // Initialize the replayer
-        //   const replayer = new rrweb.Replayer(events, {
-        //     root: div // Target the div as the root for the replay
-        //   });
-        //   // Directly adjust the replayer wrapper if necessary
-        //   replayer.wrapper.style.maxWidth = '100%';
-        //   replayer.wrapper.style.maxHeight = '100%';
-        //   replayer.wrapper.style.width = 'auto'; // Adjust based on your needs
-        //   replayer.wrapper.style.height = 'auto'; // Adjust based on your needs
-        //   div.appendChild(replayer.wrapper);
-        //   document.body.appendChild(div);
-        //   // Optional: Request fullscreen
-        //   if (div.requestFullscreen) {
-        //     div.requestFullscreen().catch(err => {
-        //       console.error(
-        //         `Error attempting to enable fullscreen mode: ${err.message} (${err.name})`
-        //       );
-        //     });
-        //   }
-        //   replayer.play();
-        //   // Adjust this to use JupyterLab's dialog if you're integrating with JupyterLab
-        //   console.log('running the modified code');
-        //   // Assuming showDialog is a function you have that creates a modal dialog
-        //   showDialog({
-        //     title: 'Replay Session',
-        //     body: new Widget({ node: div }),
-        //     buttons: [Dialog.okButton({ label: 'Close' })]
-        //   });
-        // }
-        // function showReplayModal() {
-        //   if (events.length === 0) {
-        //     console.log('No recorded events');
-        //     return;
-        //   }
-        //   console.log('Replaying session');
-        //   // const records = JSON.stringify({ events });
-        //   // localStorage.setItem('records', records);
-        //   // Create a div element to hold the replayer with specific styling
-        //   const div = document.createElement('div');
-        //   div.style.width = '100vw'; // Adjust width as needed
-        //   div.style.height = '100vh'; // Adjust height as needed
-        //   div.style.position = 'relative'; // Ensure it's positioned correctly within the modal
-        //   // Initialize the replayer with the events and target the newly created div
-        //   const replayer = new rrweb.Replayer(events, {
-        //     root: div // Target the div as the root for the replay
-        //   });
-        //   div.appendChild(replayer.wrapper);
-        //   // Start the replay
-        //   replayer.play();
-        //   // Show replay modal with the div as its body
-        //   console.log('running the modified code');
-        //   showDialog({
-        //     title: 'Replay Session',
-        //     body: new Widget({ node: div }),
-        //     buttons: [Dialog.okButton({ label: 'Close' })]
-        //   });
-        // }
         // Command to start recording
         app.commands.addCommand('jupyter_recorder:start', {
             label: 'Start Recording',
@@ -270,4 +197,4 @@ module.exports = "data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjMwMCIgd2lkdGg9IjMw
 /***/ })
 
 }]);
-//# sourceMappingURL=lib_index_js-data_image_svg_xml_base64_PHN2ZyBoZWlnaHQ9IjMwMCIgd2lkdGg9IjMwMCIgeG1sbnM9Imh0dH-96ddf1.95045fd5694b524e0aa8.js.map
+//# sourceMappingURL=lib_index_js-data_image_svg_xml_base64_PHN2ZyBoZWlnaHQ9IjMwMCIgd2lkdGg9IjMwMCIgeG1sbnM9Imh0dH-96ddf1.d92b72fd0559ef5807a8.js.map
