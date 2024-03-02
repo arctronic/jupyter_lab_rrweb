@@ -2,8 +2,7 @@ import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
-// import { showDialog, Dialog } from '@jupyterlab/apputils';
-// import { Widget } from '@lumino/widgets';
+
 import 'rrweb-player/dist/style.css';
 import rrwebPlayer from 'rrweb-player';
 
@@ -19,7 +18,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
   autoStart: true,
   activate: (app: JupyterFrontEnd) => {
     console.log('JupyterLab extension jupyter_recorder is activated!');
-
+    let saveIntervalId: number | null = null; // Holds the reference to the setInterval
+    const saveInterval = 60000;
     let events: rrweb.ReplayerEvents[] = [];
     let recorder: any;
 
@@ -45,17 +45,53 @@ const plugin: JupyterFrontEndPlugin<void> = {
       // Ensure dynamically added elements are also ignored by observing DOM changes
       // You might need a MutationObserver to dynamically add 'rr-ignore' to new elements
     }
+    function saveAndSendEvents() {
+      if (events.length === 0) {
+        console.log('No events to save or send');
+        return;
+      }
+
+      // Copy the events to send
+      const eventsToSend = [...events];
+      // Optionally, you can reset the events array here if you don't want to send duplicate events
+      // events = [];
+
+      // Convert events to JSON
+      const jsonEvents = JSON.stringify(eventsToSend);
+
+      // Implement the logic to save the JSON to a file or send it to a server
+      console.log('Sending events:', jsonEvents);
+      // Example: Sending events to a server endpoint
+      fetch('http://127.0.0.1:5000/shihab@email.com/alpha-141', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: jsonEvents
+      })
+        .then(response => response.json())
+        .then(data => console.log('Success:', data))
+        .catch(error => console.error('Error:', error));
+    }
 
     function startRecording() {
       addIgnoreClassToJupyterLabElements();
 
       console.log('Recording started');
-      events = [];
+      events = []; // Reset events array to start fresh
       recorder = rrweb.record({
         emit: (event: any) => {
           events.push(event);
         }
       });
+
+      // Setup periodic saving and sending of events
+      if (saveIntervalId !== null) {
+        clearInterval(saveIntervalId); // Clear previous interval if it exists
+      }
+      saveIntervalId = setInterval(() => {
+        saveAndSendEvents(); // Call the function to handle saving and sending of events
+      }, saveInterval);
     }
 
     app.restored.then(() => {
@@ -68,9 +104,15 @@ const plugin: JupyterFrontEndPlugin<void> = {
     function stopRecording() {
       console.log('Recording stopped');
       if (recorder) {
-        recorder(); // Call the stop function directly
+        recorder(); // Stop recording
         recorder = null;
       }
+      if (saveIntervalId !== null) {
+        clearInterval(saveIntervalId); // Stop the periodic saving and sending
+        saveIntervalId = null;
+      }
+      // Optionally, send the remaining events
+      saveAndSendEvents();
       // Show replay modal after stopping recording
       showReplayWithControls(events);
     }
@@ -103,7 +145,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
         target: playerContainer,
         props: {
           events: events
-          // Optional: configure width, height, and other rrweb-player options
         }
       });
 
