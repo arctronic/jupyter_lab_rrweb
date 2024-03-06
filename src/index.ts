@@ -19,8 +19,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
   activate: (app: JupyterFrontEnd) => {
     console.log('JupyterLab extension jupyter_recorder is activated!');
     let saveIntervalId: number | null = null; // Holds the reference to the setInterval
-    const saveInterval = 60000;
-    let events: rrweb.ReplayerEvents[] = [];
+    const saveInterval = 10000;
+
     let recorder: any;
 
     function addIgnoreClassToJupyterLabElements() {
@@ -45,23 +45,25 @@ const plugin: JupyterFrontEndPlugin<void> = {
       // Ensure dynamically added elements are also ignored by observing DOM changes
       // You might need a MutationObserver to dynamically add 'rr-ignore' to new elements
     }
+    let allEvents: any[] = []; // Holds all events for the entire session
+    let eventsForUpload: any[] = [];
+
     function saveAndSendEvents() {
-      if (events.length === 0) {
+      if (eventsForUpload.length === 0) {
         console.log('No events to save or send');
         return;
       }
 
       // Copy the events to send
-      const eventsToSend = [...events];
-      // Optionally, you can reset the events array here if you don't want to send duplicate events
-      // events = [];
+      const eventsToSend = [...eventsForUpload];
+      // Reset the eventsForUpload array to start fresh for the next upload
+      eventsForUpload = [];
 
-      // Convert events to JSON
+      // Convert events to JSON for upload
       const jsonEvents = JSON.stringify(eventsToSend);
 
-      // Implement the logic to save the JSON to a file or send it to a server
       console.log('Sending events:', jsonEvents);
-      // Example: Sending events to a server endpoint
+      // Logic to save the JSON to a file or send it to a server
       fetch('http://127.0.0.1:5000/shihab@email.com/alpha-141', {
         method: 'POST',
         headers: {
@@ -77,21 +79,40 @@ const plugin: JupyterFrontEndPlugin<void> = {
     function startRecording() {
       addIgnoreClassToJupyterLabElements();
 
-      console.log('Recording started');
-      events = []; // Reset events array to start fresh
+      allEvents = []; // Reset allEvents array to start fresh
+      eventsForUpload = []; // Also reset the eventsForUpload
+
       recorder = rrweb.record({
-        emit: (event: any) => {
-          events.push(event);
+        emit: event => {
+          // Add the event to both the allEvents and eventsForUpload arrays
+          allEvents.push(event);
+          eventsForUpload.push(event);
         }
       });
 
       // Setup periodic saving and sending of events
       if (saveIntervalId !== null) {
-        clearInterval(saveIntervalId); // Clear previous interval if it exists
+        clearInterval(saveIntervalId);
       }
-      saveIntervalId = setInterval(() => {
-        saveAndSendEvents(); // Call the function to handle saving and sending of events
-      }, saveInterval);
+      saveIntervalId = setInterval(saveAndSendEvents, saveInterval);
+      stopRecording();
+      startRecording();
+    }
+
+    function stopRecording() {
+      console.log('Recording stopped');
+      if (recorder) {
+        recorder.stop();
+        recorder = null;
+      }
+      if (saveIntervalId !== null) {
+        clearInterval(saveIntervalId);
+        saveIntervalId = null;
+      }
+      // Save and send any remaining events
+      saveAndSendEvents();
+      // Show replay modal after stopping recording
+      // showReplayWithControls(allEvents);
     }
 
     app.restored.then(() => {
@@ -100,22 +121,6 @@ const plugin: JupyterFrontEndPlugin<void> = {
         'Recording started triggered upon starting the jupyterlab app'
       );
     });
-
-    function stopRecording() {
-      console.log('Recording stopped');
-      if (recorder) {
-        recorder(); // Stop recording
-        recorder = null;
-      }
-      if (saveIntervalId !== null) {
-        clearInterval(saveIntervalId); // Stop the periodic saving and sending
-        saveIntervalId = null;
-      }
-      // Optionally, send the remaining events
-      saveAndSendEvents();
-      // Show replay modal after stopping recording
-      showReplayWithControls(events);
-    }
 
     function showReplayWithControls(events: any[]) {
       // Ensure the events type matches your data structure
@@ -213,6 +218,17 @@ const plugin: JupyterFrontEndPlugin<void> = {
     // Command to stop recording
     app.commands.addCommand('jupyter_recorder:stop', {
       label: 'Stop Recording',
+      execute: () => {
+        if (allEvents) {
+          showReplayWithControls(allEvents);
+        } else {
+          console.log('Not recording to show');
+        }
+      }
+    });
+
+    app.commands.addCommand('jupyter_recorder:stop', {
+      label: 'Play Recording',
       execute: () => {
         if (recorder) {
           stopRecording();
