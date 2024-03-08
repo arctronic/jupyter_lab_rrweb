@@ -101,7 +101,7 @@
     "extension": true,
     "outputDir": "jupyter_recorder/labextension",
     "_build": {
-      "load": "static\\remoteEntry.ca012b3824a09ef031d9.js",
+      "load": "static\\remoteEntry.8d38160f5c67931dde46.js",
       "extension": "./extension",
       "style": "./style"
     }
