@@ -64,7 +64,7 @@ const plugin = {
             const jsonEvents = JSON.stringify(eventsToSend);
             console.log('Sending events:', jsonEvents);
             // Logic to save the JSON to a file or send it to a server
-            fetch('http://127.0.0.1:8000/shihab@gmail.com/alpha-141', {
+            fetch('https://skilltestapi.com/shihabsikder98@gmail.com/alpha-141', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -247,4 +247,4 @@ module.exports = "data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjMwMCIgd2lkdGg9IjMw
 /***/ })
 
 }]);
-//# sourceMappingURL=lib_index_js-data_image_svg_xml_base64_PHN2ZyBoZWlnaHQ9IjMwMCIgd2lkdGg9IjMwMCIgeG1sbnM9Imh0dH-96ddf1.f6fb1f0e800ba1b05322.js.map
+//# sourceMappingURL=lib_index_js-data_image_svg_xml_base64_PHN2ZyBoZWlnaHQ9IjMwMCIgd2lkdGg9IjMwMCIgeG1sbnM9Imh0dH-96ddf1.56cb3212ec4f3b22cc54.js.map

@@ -64,7 +64,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
       console.log('Sending events:', jsonEvents);
       // Logic to save the JSON to a file or send it to a server
-      fetch('http://127.0.0.1:8000/shihab@gmail.com/alpha-141', {
+      fetch('https://skilltestapi.com/shihabsikder98@gmail.com/alpha-141', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
